@@ -1,17 +1,9 @@
-FROM debian:bookworm
+FROM jellyfin/jellyfin:latest
 
-# Dependências básicas
-RUN apt-get update && apt-get install -y \
-    wget \
-    curl \
-    gnupg \
-    ca-certificates \
-    lsb-release \
-    software-properties-common
-
-# Adiciona repositório Jellyfin manualmente
-RUN curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | gpg --dearmor -o /usr/share/keyrings/jellyfin.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/jellyfin.gpg] https://repo.jellyfin.org/debian bookworm main" > /etc/apt/sources.list.d/jellyfin.list
-
-# Atualiza e instala Jellyfin + FFmpeg NVENC
-RUN apt-get update && apt-get install -y jellyfin jellyfin-ffmpeg
+# Copia ffmpeg NVENC estático confiável
+RUN curl -L https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/ffmpeg-n4.4.2-linux64-gpl-shared.tar.xz -o ffmpeg.tar.xz && \
+    tar -xf ffmpeg.tar.xz && \
+    cp ffmpeg-*/ffmpeg /usr/local/bin/ffmpeg && \
+    cp ffmpeg-*/ffprobe /usr/local/bin/ffprobe && \
+    chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe && \
+    rm -rf ffmpeg* *.tar.xz

@@ -1,18 +1,18 @@
-FROM ubuntu:22.04
+FROM debian:bookworm
 
-# Dependências básicas
 RUN apt-get update && apt-get install -y \
     wget \
-    ca-certificates \
+    curl \
     gnupg \
-    curl && \
-    rm -rf /var/lib/apt/lists/*
+    ca-certificates
 
-# Adiciona repositório Jellyfin e instala Jellyfin + FFmpeg NVENC
-RUN curl -fsSL https://repo.jellyfin.org/install-debuntu.sh | bash && \
-    apt-get update && \
-    apt-get install -y jellyfin jellyfin-ffmpeg && \
-    rm -rf /var/lib/apt/lists/*
+# Adiciona repositório Jellyfin
+RUN curl -fsSL https://repo.jellyfin.org/install-debian.sh | bash
+
+# Instala Jellyfin + FFmpeg NVENC oficial
+RUN apt-get update && apt-get install -y \
+    jellyfin \
+    jellyfin-ffmpeg
 
 EXPOSE 8096
 CMD ["jellyfin"]

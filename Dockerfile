@@ -1,6 +1,6 @@
 FROM debian:bookworm
 
-# Instala dependências básicas
+# Dependências básicas
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -15,6 +15,3 @@ RUN curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | gpg --dearmor -
 
 # Atualiza e instala Jellyfin + FFmpeg NVENC
 RUN apt-get update && apt-get install -y jellyfin jellyfin-ffmpeg
-
-EXPOSE 8096
-CMD ["jellyfin"]

@@ -1,20 +1,12 @@
-FROM debian:bookworm
+FROM jellyfin/jellyfin:latest
 
-RUN apt-get update && apt-get install -y \
-    wget \
-    curl \
-    gnupg \
-    ca-certificates
+# Instala dependências
+RUN apt-get update && apt-get install -y curl xz-utils
 
-# Instala Jellyfin
-RUN curl -fsSL https://repo.jellyfin.org/install-debian.sh | bash && \
-    apt-get update && apt-get install -y jellyfin
-
-# Instala FFmpeg NVENC oficial do Jellyfin
-RUN wget https://repo.jellyfin.org/releases/server/debian/versions/ffmpeg/jellyfin-ffmpeg_10.9.0-1_amd64.deb && \
-    apt install -y ./jellyfin-ffmpeg_10.9.0-1_amd64.deb && \
-    rm jellyfin-ffmpeg_10.9.0-1_amd64.deb
-
-EXPOSE 8096
-CMD ["jellyfin"]
-
+# Baixa FFmpeg NVENC estático (mirror confiável)
+RUN curl -L https://objects.githubusercontent.com/github-production-release-asset-2e65be/2917872/ffmpeg-nvenc-linux64.tar.xz -o ffmpeg.tar.xz && \
+    tar -xf ffmpeg.tar.xz && \
+    mv ffmpeg-nvenc-linux64/ffmpeg /usr/local/bin/ffmpeg && \
+    mv ffmpeg-nvenc-linux64/ffprobe /usr/local/bin/ffprobe && \
+    chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe && \
+    rm -rf ffmpeg* *.tar.xz
